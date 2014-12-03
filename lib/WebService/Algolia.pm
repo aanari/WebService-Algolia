@@ -4,7 +4,10 @@ with 'WebService::Client';
 
 # VERSION
 
+use Carp;
 use Method::Signatures;
+use Storable qw(dclone);
+use URI;
 
 has api_key        => ( is => 'ro', required => 1 );
 has application_id => ( is => 'ro', required => 1 );
@@ -23,10 +26,25 @@ method get_indexes {
     return $result->{items} if $result;
 }
 
-method query_index(Str $name, HashRef $params) {
-    my $result = $self->get("/indexes/$name", $params);
-    return $result->{hits} if $result;
+method query_index(HashRef $query) {
+    my $index = delete $query->{index};
+    croak 'The \'index\' parameter is required' unless $index;
+    my $result = $self->get("/indexes/$index", $query);
+    return $result if $result;
 }
+
+method query_indexes(ArrayRef $queries) {
+    $queries = [ map {
+        my $index = delete $_->{index};
+        croak 'The \'index\' parameter is required' unless $index;
+        my $uri = URI->new;
+        $uri->query_form( %$_ );
+        { indexName => $index, params => substr($uri, 1) };
+    } @$queries ];
+    my $result = $self->post('/indexes/*/queries', { requests => $queries });
+    return $result->{results} if $result;
+}
+
 method create_index(Str $name, HashRef $data) {
     return $self->post("/indexes/$name", $data);
 }

@@ -20,11 +20,19 @@ subtest 'Index management' => sub {
 
     sleep 1;
 
-    my $query = alg->query_index($name, { query => 'bat' });
-    cmp_deeply $query => [ TD->superhashof({
+    my $query = alg->query_index({ index => $name, query => 'bat' });
+    cmp_deeply $query->{hits} => [ TD->superhashof({
             bar => { baz => 'bat'},
         })], 'Correctly matched index values from query'
         or diag explain $query;
+
+    my $queries = alg->query_indexes([
+        { index => $name, query => 'baz' },
+        { index => $name, query => 'bat' },
+    ]);
+    is @$queries => 2,
+        'Retrieved two sets of results from batch route'
+        or diag explain $queries;
 
     $indexes = alg->get_indexes();
     cmp_deeply $indexes => [ TD->superhashof({
