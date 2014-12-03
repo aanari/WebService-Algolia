@@ -25,6 +25,10 @@ method get_indexes {
     return $self->get('/indexes');
 }
 
+method get_index_object(Str $name, Str $id) {
+    return $self->get("/indexes/$name/$id");
+}
+
 method browse_index(Str $name) {
     return $self->get("/indexes/$name/browse");
 }
@@ -48,6 +52,10 @@ method query_indexes(ArrayRef $queries) {
 
 method create_index(Str $name, HashRef $data) {
     return $self->post("/indexes/$name", $data);
+}
+
+method update_index_object(Str $name, Str $id, HashRef $data) {
+    return $self->put("/indexes/$name/$id", $data);
 }
 
 method clear_index(Str $name) {

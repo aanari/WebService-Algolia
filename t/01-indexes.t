@@ -3,7 +3,7 @@ use t::lib::Harness qw(alg skip_unless_has_keys);
 
 skip_unless_has_keys;
 
-subtest 'Index management' => sub {
+subtest 'Index Management' => sub {
     my $indexes = alg->get_indexes;
     cmp_deeply $indexes->{items} => [],
         'Correctly retrieved no indexes'
@@ -62,6 +62,25 @@ subtest 'Index management' => sub {
     cmp_deeply $indexes->{items} => [],
         'Correctly retrieved no indexes again'
         or diag explain $indexes;
+};
+
+subtest 'Index Object Management' => sub {
+    my $name = 'bourbon';
+    my $content = { delicious => 'limoncello' };
+    my $index = alg->create_index($name, $content);
+    my $object_id = $index->{objectID};
+
+    $content = { terrible => 'cabbage' };
+    alg->update_index_object($name, $object_id, $content);
+
+    sleep 1;
+
+    my $object = alg->get_index_object($name, $object_id);
+    cmp_deeply $object => TD->superhashof($content),
+        "Successfully updated contents of object '$object_id'"
+        or diag explain $object;
+
+    ok alg->delete_index($name);
 };
 
 done_testing;
