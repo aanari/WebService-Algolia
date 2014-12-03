@@ -6,6 +6,22 @@ WebService::Algolia
 
 version 0.0001
 
+# SYNOPSIS
+
+    use WebService::Algolia;
+
+    my $alg = WebService::Algolia->new(
+        application_id => '12345',
+        api_key        => 'abcde',
+    );
+
+# DESCRIPTION
+
+This module provides bindings for the
+[Algolia](https://www.algolia.com/doc) API.
+
+[![Build Status](https://travis-ci.org/aanari/WebService-Algolia.svg?branch=master)](https://travis-ci.org/aanari/WebService-Algolia)
+
 # BUGS
 
 Please report any bugs or feature requests on the bugtracker website
