@@ -22,15 +22,17 @@ method BUILD(...) {
 }
 
 method get_indexes {
-    my $result = $self->get('/indexes');
-    return $result->{items} if $result;
+    return $self->get('/indexes');
+}
+
+method browse_index(Str $name) {
+    return $self->get("/indexes/$name/browse");
 }
 
 method query_index(HashRef $query) {
     my $index = delete $query->{index};
     croak 'The \'index\' parameter is required' unless $index;
-    my $result = $self->get("/indexes/$index", $query);
-    return $result if $result;
+    return $self->get("/indexes/$index", $query);
 }
 
 method query_indexes(ArrayRef $queries) {
@@ -41,12 +43,15 @@ method query_indexes(ArrayRef $queries) {
         $uri->query_form( %$_ );
         { indexName => $index, params => substr($uri, 1) };
     } @$queries ];
-    my $result = $self->post('/indexes/*/queries', { requests => $queries });
-    return $result->{results} if $result;
+    return $self->post('/indexes/*/queries', { requests => $queries });
 }
 
 method create_index(Str $name, HashRef $data) {
     return $self->post("/indexes/$name", $data);
+}
+
+method clear_index(Str $name) {
+    return $self->post("/indexes/$name/clear", {});
 }
 
 method delete_index(Str $name) {
