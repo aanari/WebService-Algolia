@@ -25,9 +25,8 @@ method get_indexes {
     return $self->get('/indexes');
 }
 
-
-method browse_index(Str $name) {
-    return $self->get("/indexes/$name/browse");
+method browse_index(Str $index) {
+    return $self->get("/indexes/$index/browse");
 }
 
 method query_index(HashRef $query) {
@@ -47,24 +46,38 @@ method query_indexes(ArrayRef $queries) {
     return $self->post('/indexes/*/queries', { requests => $queries });
 }
 
-method clear_index(Str $name) {
-    return $self->post("/indexes/$name/clear", {});
+method clear_index(Str $index) {
+    return $self->post("/indexes/$index/clear", {});
 }
 
-method delete_index(Str $name) {
-    return $self->delete("/indexes/$name");
+method copy_index(Str $source, Str $destination) {
+    return $self->post("/indexes/$source/operation", {
+        operation   => 'copy',
+        destination => $destination,
+    });
 }
 
-method get_index_object(Str $name, Str $id) {
-    return $self->get("/indexes/$name/$id");
+method move_index(Str $source, Str $destination) {
+    return $self->post("/indexes/$source/operation", {
+        operation   => 'move',
+        destination => $destination,
+    });
 }
 
-method create_index_object(Str $name, HashRef $data) {
-    return $self->post("/indexes/$name", $data);
+method delete_index(Str $index) {
+    return $self->delete("/indexes/$index");
 }
 
-method update_index_object(Str $name, Str $id, HashRef $data) {
-    return $self->put("/indexes/$name/$id", $data);
+method get_index_object(Str $index, Str $object_id) {
+    return $self->get("/indexes/$index/$object_id");
+}
+
+method create_index_object(Str $index, HashRef $data) {
+    return $self->post("/indexes/$index", $data);
+}
+
+method update_index_object(Str $index, Str $object_id, HashRef $data) {
+    return $self->put("/indexes/$index/$object_id", $data);
 }
 
 =head1 SYNOPSIS
@@ -276,6 +289,36 @@ B<Response:>
     {
         taskID    => 26036480,
         updatedAt => "2014-12-04T00:53:40.957Z",
+    }
+
+=head2 copy_index
+
+Copies an existing index. If the destination index already exists, its specific API keys will be preserved and the source index specific API keys will be added.
+
+B<Request:>
+
+    copy_index('foo' => 'foo2');
+
+B<Response:>
+
+    {
+        taskID    => 26071750,
+        updatedAt => "2014-12-04T01:16:20.307Z",
+    }
+
+=head2 move_index
+
+Moves an existing index. If the destination index already exists, its specific API keys will be preserved and the source index specific API keys will be added.
+
+B<Request:>
+
+    move_index('foo' => 'foo2');
+
+B<Response:>
+
+    {
+        taskID    => 26079100,
+        updatedAt => "2014-12-04T01:21:01.815Z",
     }
 
 =head2 delete_index

@@ -1,5 +1,6 @@
 use Test::Modern;
 use t::lib::Harness qw(alg skip_unless_has_keys);
+use Data::Dump;
 
 skip_unless_has_keys;
 
@@ -54,7 +55,30 @@ subtest 'Index Management' => sub {
         "Successfully cleared index '$name'"
         or diag explain $contents;
 
-    ok alg->delete_index($name), "Deleted index '$name' completely";
+    my $name2 = 'foo2';
+    ok alg->copy_index($name => $name2), "Copied index '$name' to '$name2'";
+
+    sleep 1;
+
+    $indexes = alg->get_indexes();
+    cmp_deeply $indexes->{items} => [ map { TD->superhashof({ name => $_ })}
+        ($name, $name2)],
+        "Found indexes '$name' and '$name2'"
+        or diag explain $indexes;
+
+    my $name3 = 'foo3';
+    ok alg->move_index($name2 => $name3), "Moved index '$name2' to '$name3'";
+
+    sleep 1;
+
+    $indexes = alg->get_indexes();
+    cmp_deeply $indexes->{items} => [ map { TD->superhashof({ name => $_ })}
+        ($name, $name3)],
+        "Found indexes '$name' and '$name3'"
+        or diag explain $indexes;
+
+    ok alg->delete_index($_), "Deleted index '$_' completely"
+        for ($name, $name3);
 
     sleep 1;
 

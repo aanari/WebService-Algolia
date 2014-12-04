@@ -6,6 +6,7 @@ requires "URI" => "0";
 requires "WebService::Client" => "0";
 
 on 'test' => sub {
+  requires "Data::Dump" => "0";
   requires "Exporter" => "0";
   requires "File::Spec" => "0";
   requires "IO::Handle" => "0";

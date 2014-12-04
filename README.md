@@ -217,6 +217,36 @@ Deletes the index content. Settings and index specific API keys are kept untouch
         updatedAt => "2014-12-04T00:53:40.957Z",
     }
 
+## copy\_index
+
+Copies an existing index. If the destination index already exists, its specific API keys will be preserved and the source index specific API keys will be added.
+
+**Request:**
+
+    copy_index('foo' => 'foo2');
+
+**Response:**
+
+    {
+        taskID    => 26071750,
+        updatedAt => "2014-12-04T01:16:20.307Z",
+    }
+
+## move\_index
+
+Moves an existing index. If the destination index already exists, its specific API keys will be preserved and the source index specific API keys will be added.
+
+**Request:**
+
+    move_index('foo' => 'foo2');
+
+**Response:**
+
+    {
+        taskID    => 26079100,
+        updatedAt => "2014-12-04T01:21:01.815Z",
+    }
+
 ## delete\_index
 
 Deletes an existing index.
