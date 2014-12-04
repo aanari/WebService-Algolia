@@ -68,6 +68,14 @@ method delete_index(Str $index) {
     return $self->delete("/indexes/$index");
 }
 
+method get_index_settings(Str $index) {
+    return $self->get("/indexes/$index/settings");
+}
+
+method update_index_settings(Str $index, $settings) {
+    return $self->put("/indexes/$index/settings", $settings);
+}
+
 method get_index_object(Str $index, Str $object_id) {
     return $self->get("/indexes/$index/$object_id");
 }
@@ -345,6 +353,60 @@ B<Response:>
     {
         taskID    => 26040530,
         deletedAt => "2014-12-04T00:56:00.773Z",
+    }
+
+=head2 get_index_settings
+
+Retrieves index settings.
+
+B<Request:>
+
+    get_index_settings('foo');
+
+B<Response:>
+
+    {
+        'attributeForDistinct'  => undef,
+        'attributesForFaceting' => undef,
+        'attributesToHighlight' => undef,
+        'attributesToIndex'     => [ 'bat' ],
+        'attributesToRetrieve'  => undef,
+        'attributesToSnippet'   => undef,
+        'customRanking'         => undef,
+        'highlightPostTag'      => '</em>',
+        'highlightPreTag'       => '<em>',
+        'hitsPerPage'           => 20,
+        'minWordSizefor1Typo'   => 4,
+        'minWordSizefor2Typos'  => 8,
+        'optionalWords'         => undef,
+        'queryType'             => 'prefixLast',
+        'ranking'               => [
+            'typo',
+            'geo',
+            'words',
+            'proximity',
+            'attribute',
+            'exact',
+            'custom'
+        ],
+        'removeWordsIfNoResults'  => 'none',
+        'separatorsToIndex'       => '',
+        'unretrievableAttributes' => undef
+    }
+
+=head2 update_index_settings
+
+Updates part of an index's settings.
+
+B<Request:>
+
+    update_index_settings('foo', { attributesToIndex => ['bat'] });
+
+B<Response:>
+
+    {
+        taskID    => 27224430,
+        updatedAt => "2014-12-04T19:52:29.54Z",
     }
 
 =head2 create_index_object

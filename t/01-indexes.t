@@ -54,6 +54,21 @@ subtest 'Index Management' => sub {
         "Successfully cleared index '$name'"
         or diag explain $contents;
 
+    my $settings = alg->get_index_settings($name);
+    cmp_deeply $settings->{attributesToIndex} => undef,
+        "Correctly found no attributesToIndex for '$name'"
+        or diag explain $settings;
+
+    ok alg->update_index_settings($name, { attributesToIndex => ['bat']}),
+        "Updated attributesToIndex for '$name'";
+
+    sleep 1;
+
+    $settings = alg->get_index_settings($name);
+    cmp_deeply $settings->{attributesToIndex} => ['bat'],
+        "Correctly found 'bat' in attributesToIndex for '$name'"
+        or diag explain $settings;
+
     my $name2 = 'foo2';
     ok alg->copy_index($name => $name2), "Copied index '$name' to '$name2'";
 

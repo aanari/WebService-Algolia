@@ -262,6 +262,60 @@ Deletes an existing index.
         deletedAt => "2014-12-04T00:56:00.773Z",
     }
 
+## get\_index\_settings
+
+Retrieves index settings.
+
+**Request:**
+
+    get_index_settings('foo');
+
+**Response:**
+
+    {
+        'attributeForDistinct'  => undef,
+        'attributesForFaceting' => undef,
+        'attributesToHighlight' => undef,
+        'attributesToIndex'     => [ 'bat' ],
+        'attributesToRetrieve'  => undef,
+        'attributesToSnippet'   => undef,
+        'customRanking'         => undef,
+        'highlightPostTag'      => '</em>',
+        'highlightPreTag'       => '<em>',
+        'hitsPerPage'           => 20,
+        'minWordSizefor1Typo'   => 4,
+        'minWordSizefor2Typos'  => 8,
+        'optionalWords'         => undef,
+        'queryType'             => 'prefixLast',
+        'ranking'               => [
+            'typo',
+            'geo',
+            'words',
+            'proximity',
+            'attribute',
+            'exact',
+            'custom'
+        ],
+        'removeWordsIfNoResults'  => 'none',
+        'separatorsToIndex'       => '',
+        'unretrievableAttributes' => undef
+    }
+
+## update\_index\_settings
+
+Updates part of an index's settings.
+
+**Request:**
+
+    update_index_settings('foo', { attributesToIndex => ['bat'] });
+
+**Response:**
+
+    {
+        taskID    => 27224430,
+        updatedAt => "2014-12-04T19:52:29.54Z",
+    }
+
 ## create\_index\_object
 
 Creates a new object in the index, and automatically assigns an Object ID.
