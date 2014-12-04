@@ -1,6 +1,5 @@
 use Test::Modern;
 use t::lib::Harness qw(alg skip_unless_has_keys);
-use Data::Dump;
 
 skip_unless_has_keys;
 
@@ -104,6 +103,22 @@ subtest 'Index Object Management' => sub {
     cmp_deeply $object => TD->superhashof($content),
         "Successfully updated contents of object '$object_id'"
         or diag explain $object;
+
+    my $object_id2 = 'a1b2c3';
+    ok alg->update_index_object($name, $object_id2, $content),
+        "Creating new object with ID: '$object_id2'";
+
+    sleep 1;
+
+    my $objects = alg->get_index_objects([
+        { index => $name, object => $object_id },
+        { index => $name, object => $object_id2 },
+    ]);
+
+    cmp_deeply $objects->{results} => [ map { TD->superhashof({ objectID => $_ })}
+        ($object_id, $object_id2)],
+        "Found objects '$object_id' and '$object_id2'"
+        or diag explain $objects;
 
     ok alg->delete_index($name), "Deleted index '$name' completely";
 };

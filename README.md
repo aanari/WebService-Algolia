@@ -258,8 +258,8 @@ Deletes an existing index.
 **Response:**
 
     {
-        deletedAt => "2014-12-04T00:56:00.773Z",
         taskID    => 26040530,
+        deletedAt => "2014-12-04T00:56:00.773Z",
     }
 
 ## create\_index\_object
@@ -273,9 +273,9 @@ Creates a new object in the index, and automatically assigns an Object ID.
 **Response**
 
     {
-        createdAt => "2014-12-04T00:47:21.781Z",
         objectID  => 5333250,
         taskID    => 26026500,
+        createdAt => "2014-12-04T00:47:21.781Z",
     }
 
 ## get\_index\_object
@@ -289,8 +289,32 @@ Returns one object from the index.
 **Response**
 
     {
-        delicious => 'limoncello',
         objectID  => 5333250,
+        delicious => 'limoncello',
+    }
+
+## get\_index\_objects
+
+Retrieve several objects with one API call.
+
+**Request:**
+
+    get_index_objects([
+        { index => 'foo', object => 5333250 },
+        { index => 'foo', object => 5333251 },
+    ]);
+
+**Response**
+
+    {
+        results => [{
+            objectID  => 5333250,
+            delicious => 'limoncello',
+        },
+        {
+            objectID  => 5333251,
+            terrible => 'cabbage',
+        }],
     }
 
 ## update\_index\_object

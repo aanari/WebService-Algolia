@@ -72,6 +72,17 @@ method get_index_object(Str $index, Str $object_id) {
     return $self->get("/indexes/$index/$object_id");
 }
 
+method get_index_objects(ArrayRef $objects) {
+    $objects = [ map {
+        my $index = delete $_->{index};
+        croak 'The \'index\' parameter is required' unless $index;
+        my $object = delete $_->{object};
+        croak 'The \'object\' parameter is required' unless $object;
+        { indexName => $index, objectID => $object }
+    } @$objects ];
+    return $self->post('/indexes/*/objects', { requests => $objects });
+}
+
 method create_index_object(Str $index, HashRef $data) {
     return $self->post("/indexes/$index", $data);
 }
@@ -332,8 +343,8 @@ B<Request:>
 B<Response:>
 
     {
-        deletedAt => "2014-12-04T00:56:00.773Z",
         taskID    => 26040530,
+        deletedAt => "2014-12-04T00:56:00.773Z",
     }
 
 =head2 create_index_object
@@ -347,9 +358,9 @@ B<Request:>
 B<Response>
 
     {
-        createdAt => "2014-12-04T00:47:21.781Z",
         objectID  => 5333250,
         taskID    => 26026500,
+        createdAt => "2014-12-04T00:47:21.781Z",
     }
 
 =head2 get_index_object
@@ -363,8 +374,32 @@ B<Request:>
 B<Response>
 
     {
-        delicious => 'limoncello',
         objectID  => 5333250,
+        delicious => 'limoncello',
+    }
+
+=head2 get_index_objects
+
+Retrieve several objects with one API call.
+
+B<Request:>
+
+    get_index_objects([
+        { index => 'foo', object => 5333250 },
+        { index => 'foo', object => 5333251 },
+    ]);
+
+B<Response>
+
+    {
+        results => [{
+            objectID  => 5333250,
+            delicious => 'limoncello',
+        },
+        {
+            objectID  => 5333251,
+            terrible => 'cabbage',
+        }],
     }
 
 =head2 update_index_object
