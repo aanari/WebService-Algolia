@@ -4,7 +4,7 @@ WebService::Algolia
 
 # VERSION
 
-version 0.0100
+version 0.0101
 
 # SYNOPSIS
 
