@@ -11,7 +11,7 @@ subtest 'Index Management' => sub {
 
     my $name = 'foo';
     my $content = { bar => { baz => 'bat'}};
-    my $index = alg->create_index($name, $content);
+    my $index = alg->create_index_object($name, $content);
     cmp_deeply $index => TD->superhashof({
             createdAt => TD->ignore(),
             objectID  => TD->re('\d+'),
@@ -45,7 +45,7 @@ subtest 'Index Management' => sub {
         "Matched contents of index '$name'"
         or diag explain $contents;
 
-    alg->clear_index($name);
+    ok alg->clear_index($name), "Cleared index '$name' content";
 
     sleep 1;
 
@@ -67,11 +67,12 @@ subtest 'Index Management' => sub {
 subtest 'Index Object Management' => sub {
     my $name = 'bourbon';
     my $content = { delicious => 'limoncello' };
-    my $index = alg->create_index($name, $content);
+    my $index = alg->create_index_object($name, $content);
     my $object_id = $index->{objectID};
 
     $content = { terrible => 'cabbage' };
-    alg->update_index_object($name, $object_id, $content);
+    ok alg->update_index_object($name, $object_id, $content),
+        "Updating contents of object '$object_id'";
 
     sleep 1;
 
@@ -80,7 +81,7 @@ subtest 'Index Object Management' => sub {
         "Successfully updated contents of object '$object_id'"
         or diag explain $object;
 
-    ok alg->delete_index($name);
+    ok alg->delete_index($name), "Deleted index '$name' completely";
 };
 
 done_testing;
