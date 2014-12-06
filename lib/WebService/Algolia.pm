@@ -103,6 +103,10 @@ method update_index_object(Str $index, Str $object_id, HashRef $data) {
     return $self->post("/indexes/$index/$object_id/partial", $data);
 }
 
+method get_task_status(Str $index, Str $task_id) {
+    return $self->get("/indexes/$index/task/$task_id");
+}
+
 =head1 SYNOPSIS
 
     use WebService::Algolia;
@@ -500,6 +504,20 @@ B<Response>
         updatedAt => "2014-12-06T02:49:40.859Z",
     }
 
-=cut
+=head2 get_task_status
 
+Retrieves the status of a given task (published or notPublished). Also returns a C<pendingTask> flag that indicates if the index has remaining task(s) running.
+
+B<Request:>
+
+    get_task_status('foo', 29734242);
+
+B<Response>
+
+    {
+        pendingTask => bless(do{\(my $o = 0)}, "JSON::PP::Boolean"),
+        status => "published",
+    }
+
+=cut
 1;

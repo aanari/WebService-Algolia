@@ -403,6 +403,21 @@ Updates part of an object (if the object does not exist, it will be created. You
         updatedAt => "2014-12-06T02:49:40.859Z",
     }
 
+## get\_task\_status
+
+Retrieves the status of a given task (published or notPublished). Also returns a `pendingTask` flag that indicates if the index has remaining task(s) running.
+
+**Request:**
+
+    get_task_status('foo', 29734242);
+
+**Response**
+
+    {
+        pendingTask => bless(do{\(my $o = 0)}, "JSON::PP::Boolean"),
+        status => "published",
+    }
+
 # BUGS
 
 Please report any bugs or feature requests on the bugtracker website

@@ -149,6 +149,20 @@ subtest 'Index Object Management' => sub {
         }], "Successfully replaced contents of object '$object_id'"
         or diag explain $contents;
 
+    my $task_id = alg->replace_index_object($name, $object_id, $content)->{taskID};
+    my $task = alg->get_task_status($name, $task_id);
+
+    is $task->{status} => 'notPublished',
+        "Retrieved task '$task_id' with status: 'notPublished'"
+        or diag explain $task;
+
+    sleep 1;
+
+    $task = alg->get_task_status($name, $task_id);
+    is $task->{status} => 'published',
+        "Retrieved task '$task_id' with status: 'published'"
+        or diag explain $task;
+
     cmp_deeply $objects->{results} => [ map { TD->superhashof({ objectID => $_ })}
         ($object_id, $object_id2)],
         "Found objects '$object_id' and '$object_id2'"
