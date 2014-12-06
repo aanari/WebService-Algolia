@@ -95,8 +95,12 @@ method create_index_object(Str $index, HashRef $data) {
     return $self->post("/indexes/$index", $data);
 }
 
-method update_index_object(Str $index, Str $object_id, HashRef $data) {
+method replace_index_object(Str $index, Str $object_id, HashRef $data) {
     return $self->put("/indexes/$index/$object_id", $data);
+}
+
+method update_index_object(Str $index, Str $object_id, HashRef $data) {
+    return $self->post("/indexes/$index/$object_id/partial", $data);
 }
 
 =head1 SYNOPSIS
@@ -464,14 +468,13 @@ B<Response>
         }],
     }
 
-=head2 update_index_object
+=head2 replace_index_object
 
-Creates a new object in the index, and automatically assigns an object ID.
 Creates or replaces an object (if the object does not exist, it will be created). When an object already exists for the specified object ID, the whole object is replaced: existing attributes that are not replaced are deleted.
 
 B<Request:>
 
-    update_index_object('foo', 5333250, { delicious => 'limoncello' });
+    replace_index_object('foo', 5333250, { delicious => 'limoncello' });
 
 B<Response>
 
@@ -479,6 +482,22 @@ B<Response>
         objectID  => 5333250,
         taskID    => 26034540,
         updatedAt => "2014-12-04T00:52:32.416Z",
+    }
+
+=head2 update_index_object
+
+Updates part of an object (if the object does not exist, it will be created. You can avoid an automatic creation of the object by passing C<createIfNotExists=false> as a query argument).
+
+B<Request:>
+
+    update_index_object('foo', 5333251, { another => 'pilsner?' });
+
+B<Response>
+
+    {
+        objectID  => 5333251,
+        taskID    => 29453760,
+        updatedAt => "2014-12-06T02:49:40.859Z",
     }
 
 =cut

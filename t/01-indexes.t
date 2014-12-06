@@ -109,18 +109,18 @@ subtest 'Index Object Management' => sub {
     my $object_id = $index->{objectID};
 
     $content = { terrible => 'cabbage' };
-    ok alg->update_index_object($name, $object_id, $content),
-        "Updating contents of object '$object_id'";
+    ok alg->replace_index_object($name, $object_id, $content),
+        "Replacing contents of object '$object_id'";
 
     sleep 1;
 
     my $object = alg->get_index_object($name, $object_id);
     cmp_deeply $object => TD->superhashof($content),
-        "Successfully updated contents of object '$object_id'"
+        "Successfully replaced contents of object '$object_id'"
         or diag explain $object;
 
     my $object_id2 = 'a1b2c3';
-    ok alg->update_index_object($name, $object_id2, $content),
+    ok alg->replace_index_object($name, $object_id2, $content),
         "Creating new object with ID: '$object_id2'";
 
     sleep 1;
@@ -129,6 +129,25 @@ subtest 'Index Object Management' => sub {
         { index => $name, object => $object_id },
         { index => $name, object => $object_id2 },
     ]);
+
+    $content = { another => 'pilsner?'};
+    ok alg->update_index_object($name, $object_id, $content),
+        "Updating contents of object '$object_id'";
+
+    sleep 1;
+
+    my $contents = alg->browse_index($name)->{hits};
+    cmp_deeply $contents => [
+        {
+            objectID => $object_id2,
+            terrible => 'cabbage',
+        },
+        {
+            objectID => $object_id,
+            terrible => 'cabbage',
+            another  => 'pilsner?',
+        }], "Successfully replaced contents of object '$object_id'"
+        or diag explain $contents;
 
     cmp_deeply $objects->{results} => [ map { TD->superhashof({ objectID => $_ })}
         ($object_id, $object_id2)],

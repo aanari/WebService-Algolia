@@ -371,14 +371,13 @@ Retrieve several objects with one API call.
         }],
     }
 
-## update\_index\_object
+## replace\_index\_object
 
-Creates a new object in the index, and automatically assigns an object ID.
 Creates or replaces an object (if the object does not exist, it will be created). When an object already exists for the specified object ID, the whole object is replaced: existing attributes that are not replaced are deleted.
 
 **Request:**
 
-    update_index_object('foo', 5333250, { delicious => 'limoncello' });
+    replace_index_object('foo', 5333250, { delicious => 'limoncello' });
 
 **Response**
 
@@ -386,6 +385,22 @@ Creates or replaces an object (if the object does not exist, it will be created)
         objectID  => 5333250,
         taskID    => 26034540,
         updatedAt => "2014-12-04T00:52:32.416Z",
+    }
+
+## update\_index\_object
+
+Updates part of an object (if the object does not exist, it will be created. You can avoid an automatic creation of the object by passing `createIfNotExists=false` as a query argument).
+
+**Request:**
+
+    update_index_object('foo', 5333251, { another => 'pilsner?' });
+
+**Response**
+
+    {
+        objectID  => 5333251,
+        taskID    => 29453760,
+        updatedAt => "2014-12-06T02:49:40.859Z",
     }
 
 # BUGS
