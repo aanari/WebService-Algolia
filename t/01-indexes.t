@@ -150,15 +150,10 @@ subtest 'Index Object Management' => sub {
         or diag explain $contents;
 
     my $task_id = alg->replace_index_object($name, $object_id, $content)->{taskID};
-    my $task = alg->get_task_status($name, $task_id);
-
-    is $task->{status} => 'notPublished',
-        "Retrieved task '$task_id' with status: 'notPublished'"
-        or diag explain $task;
 
     sleep 1;
 
-    $task = alg->get_task_status($name, $task_id);
+    my $task = alg->get_task_status($name, $task_id);
     is $task->{status} => 'published',
         "Retrieved task '$task_id' with status: 'published'"
         or diag explain $task;
@@ -167,6 +162,71 @@ subtest 'Index Object Management' => sub {
         ($object_id, $object_id2)],
         "Found objects '$object_id' and '$object_id2'"
         or diag explain $objects;
+
+    ok alg->delete_index($name), "Deleted index '$name' completely";
+};
+
+subtest 'Index Key Management' => sub {
+    my $name = 'pirouette';
+    ok alg->create_index_object($name, { content => 'placeholder' }),
+        "Created index object '$name'";
+
+    my $keys = alg->get_keys;
+    cmp_deeply $keys->{keys} => [],
+        "Correctly retrieved no keys on '$name'"
+        or diag explain $keys;
+
+    my $key = alg->create_index_key($name, {})->{key};
+    ok $key, "Successfully created key: '$key'";
+
+    sleep 1;
+
+    my $key_object = alg->get_index_key($name, $key);
+    cmp_deeply $key_object => {
+            acl      => [],
+            validity => 0,
+            value    => $key,
+        }, "Successfully retrieved key '$key'"
+        or diag explain $key_object;
+
+    $keys = alg->get_keys;
+    cmp_deeply $keys->{keys} => [{
+            acl      => [],
+            index    => $name,
+            validity => 0,
+            value    => $key,
+        }], "Retrieved key '$key' again"
+        or diag explain $keys;
+
+    $keys = alg->get_index_keys($name);
+    cmp_deeply $keys->{keys} => [{
+            acl      => [],
+            validity => 0,
+            value    => $key,
+        }], "Retrieved key '$key' again"
+        or diag explain $keys;
+
+    ok alg->update_index_key($name, $key, { acl => ['search']}),
+        "Successfully updated key '$key'";
+
+    sleep 1;
+
+    $key_object = alg->get_index_key($name, $key);
+    cmp_deeply $key_object => {
+            acl      => ['search'],
+            validity => 0,
+            value    => $key,
+        }, 'Retrieved key matches with updated fields'
+        or diag explain $key_object;
+
+    ok alg->delete_index_key($name, $key), "Deleted key '$key' completely";
+
+    sleep 1;
+
+    $keys = alg->get_keys;
+    cmp_deeply $keys->{keys} => [],
+        "Correctly retrieved no keys on '$name'"
+        or diag explain $keys;
 
     ok alg->delete_index($name), "Deleted index '$name' completely";
 };

@@ -4,7 +4,7 @@ WebService::Algolia
 
 # VERSION
 
-version 0.0310
+version 0.0400
 
 # SYNOPSIS
 
@@ -324,7 +324,7 @@ Creates a new object in the index, and automatically assigns an Object ID.
 
     create_index_object('foo', { bar => { baz => 'bat' }});
 
-**Response**
+**Response:**
 
     {
         objectID  => 5333250,
@@ -340,7 +340,7 @@ Returns one object from the index.
 
     get_index_object('foo', 5333250);
 
-**Response**
+**Response:**
 
     {
         objectID  => 5333250,
@@ -358,7 +358,7 @@ Retrieve several objects with one API call.
         { index => 'foo', object => 5333251 },
     ]);
 
-**Response**
+**Response:**
 
     {
         results => [{
@@ -379,7 +379,7 @@ Creates or replaces an object (if the object does not exist, it will be created)
 
     replace_index_object('foo', 5333250, { delicious => 'limoncello' });
 
-**Response**
+**Response:**
 
     {
         objectID  => 5333250,
@@ -395,12 +395,117 @@ Updates part of an object (if the object does not exist, it will be created. You
 
     update_index_object('foo', 5333251, { another => 'pilsner?' });
 
-**Response**
+**Response:**
 
     {
         objectID  => 5333251,
         taskID    => 29453760,
         updatedAt => "2014-12-06T02:49:40.859Z",
+    }
+
+## get\_keys
+
+Retrieves API keys that have access to one index with their rights.
+
+**Request:**
+
+    get_keys();
+
+**Response:**
+
+    {
+        keys => [
+            {
+                acl      => [],
+                index    => "pirouette",
+                validity => 0,
+                value    => "181b9114149666398628faa37b31cc8d",
+            },
+            {
+                acl      => ['browse'],
+                index    => "gelato",
+                validity => 0,
+                value    => "1428a48214792ac9f6324a823991aa4c",
+            },
+        ],
+    }
+
+## get\_index\_keys
+
+Retrieves API keys that have access to this index with their rights.
+
+**Request:**
+
+    get_index_keys('pirouette');
+
+**Response:**
+
+    {
+        keys => [{
+            acl      => [],
+            validity => 0,
+            value    => "181b9114149666398628faa37b31cc8d",
+        }],
+    }
+
+## get\_index\_key
+
+Returns the rights of a given index specific API key that has been created with the add index specific key API.
+
+**Request:**
+
+    get_index_key('pirouette', '181b9114149666398628faa37b31cc8d');
+
+**Response:**
+
+    {
+        acl      => [],
+        validity => 0,
+        value    => "181b9114149666398628faa37b31cc8d",
+    }
+
+## create\_index\_key
+
+Adds a new key that can access this index.
+
+**Request:**
+
+    create_index_key('pirouette', { acl => ['search']});
+
+**Response:**
+
+    {
+        createdAt => "2014-12-08T15:54:22.464Z",
+        key       => "181b9114149666398628faa37b31cc8d",
+    }
+
+## update\_index\_key
+
+Updates a key that can access this index.
+
+**Request:**
+
+    update_index_key('pirouette', '181b9114149666398628faa37b31cc8d', { acl => ['search', 'browse']});
+
+**Response:**
+
+    {
+        updatedAt => "2014-12-08T16:39:11.9Z",
+        key       => "181b9114149666398628faa37b31cc8d",
+    }
+
+## delete\_index\_key
+
+Deletes an index specific API key that has been created with the add index specific key API.
+
+**Request:**
+
+    delete_index_key('pirouette', '181b9114149666398628faa37b31cc8d');
+
+**Response:**
+
+    {
+        deletedAt => "2014-12-08T16:40:49.86Z",
     }
 
 ## get\_task\_status
@@ -411,7 +516,7 @@ Retrieves the status of a given task (published or notPublished). Also returns a
 
     get_task_status('foo', 29734242);
 
-**Response**
+**Response:**
 
     {
         pendingTask => bless(do{\(my $o = 0)}, "JSON::PP::Boolean"),

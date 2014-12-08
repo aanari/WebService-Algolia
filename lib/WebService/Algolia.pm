@@ -103,6 +103,30 @@ method update_index_object(Str $index, Str $object_id, HashRef $data) {
     return $self->post("/indexes/$index/$object_id/partial", $data);
 }
 
+method get_keys {
+    return $self->get('/indexes/*/keys');
+}
+
+method get_index_keys(Str $index) {
+    return $self->get("/indexes/$index/keys");
+}
+
+method get_index_key(Str $index, Str $key) {
+    return $self->get("/indexes/$index/keys/$key");
+}
+
+method create_index_key(Str $index, HashRef $data) {
+    return $self->post("/indexes/$index/keys", $data);
+}
+
+method update_index_key(Str $index, Str $key, HashRef $data) {
+    return $self->put("/indexes/$index/keys/$key", $data);
+}
+
+method delete_index_key(Str $index, Str $key) {
+    return $self->delete("/indexes/$index/keys/$key");
+}
+
 method get_task_status(Str $index, Str $task_id) {
     return $self->get("/indexes/$index/task/$task_id");
 }
@@ -425,7 +449,7 @@ B<Request:>
 
     create_index_object('foo', { bar => { baz => 'bat' }});
 
-B<Response>
+B<Response:>
 
     {
         objectID  => 5333250,
@@ -441,7 +465,7 @@ B<Request:>
 
     get_index_object('foo', 5333250);
 
-B<Response>
+B<Response:>
 
     {
         objectID  => 5333250,
@@ -459,7 +483,7 @@ B<Request:>
         { index => 'foo', object => 5333251 },
     ]);
 
-B<Response>
+B<Response:>
 
     {
         results => [{
@@ -480,7 +504,7 @@ B<Request:>
 
     replace_index_object('foo', 5333250, { delicious => 'limoncello' });
 
-B<Response>
+B<Response:>
 
     {
         objectID  => 5333250,
@@ -496,12 +520,117 @@ B<Request:>
 
     update_index_object('foo', 5333251, { another => 'pilsner?' });
 
-B<Response>
+B<Response:>
 
     {
         objectID  => 5333251,
         taskID    => 29453760,
         updatedAt => "2014-12-06T02:49:40.859Z",
+    }
+
+=head2 get_keys
+
+Retrieves API keys that have access to one index with their rights.
+
+B<Request:>
+
+    get_keys();
+
+B<Response:>
+
+    {
+        keys => [
+            {
+                acl      => [],
+                index    => "pirouette",
+                validity => 0,
+                value    => "181b9114149666398628faa37b31cc8d",
+            },
+            {
+                acl      => ['browse'],
+                index    => "gelato",
+                validity => 0,
+                value    => "1428a48214792ac9f6324a823991aa4c",
+            },
+        ],
+    }
+
+=head2 get_index_keys
+
+Retrieves API keys that have access to this index with their rights.
+
+B<Request:>
+
+    get_index_keys('pirouette');
+
+B<Response:>
+
+    {
+        keys => [{
+            acl      => [],
+            validity => 0,
+            value    => "181b9114149666398628faa37b31cc8d",
+        }],
+    }
+
+=head2 get_index_key
+
+Returns the rights of a given index specific API key that has been created with the add index specific key API.
+
+B<Request:>
+
+    get_index_key('pirouette', '181b9114149666398628faa37b31cc8d');
+
+B<Response:>
+
+    {
+        acl      => [],
+        validity => 0,
+        value    => "181b9114149666398628faa37b31cc8d",
+    }
+
+=head2 create_index_key
+
+Adds a new key that can access this index.
+
+B<Request:>
+
+    create_index_key('pirouette', { acl => ['search']});
+
+B<Response:>
+
+    {
+        createdAt => "2014-12-08T15:54:22.464Z",
+        key       => "181b9114149666398628faa37b31cc8d",
+    }
+
+=head2 update_index_key
+
+Updates a key that can access this index.
+
+B<Request:>
+
+    update_index_key('pirouette', '181b9114149666398628faa37b31cc8d', { acl => ['search', 'browse']});
+
+B<Response:>
+
+    {
+        updatedAt => "2014-12-08T16:39:11.9Z",
+        key       => "181b9114149666398628faa37b31cc8d",
+    }
+
+=head2 delete_index_key
+
+Deletes an index specific API key that has been created with the add index specific key API.
+
+B<Request:>
+
+    delete_index_key('pirouette', '181b9114149666398628faa37b31cc8d');
+
+B<Response:>
+
+    {
+        deletedAt => "2014-12-08T16:40:49.86Z",
     }
 
 =head2 get_task_status
@@ -512,7 +641,7 @@ B<Request:>
 
     get_task_status('foo', 29734242);
 
-B<Response>
+B<Response:>
 
     {
         pendingTask => bless(do{\(my $o = 0)}, "JSON::PP::Boolean"),
@@ -520,4 +649,5 @@ B<Response>
     }
 
 =cut
+
 1;
