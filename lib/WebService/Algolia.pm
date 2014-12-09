@@ -103,12 +103,10 @@ method update_index_object(Str $index, Str $object_id, HashRef $data) {
     return $self->post("/indexes/$index/$object_id/partial", $data);
 }
 
-method get_keys {
-    return $self->get('/indexes/*/keys');
-}
-
-method get_index_keys(Str $index) {
-    return $self->get("/indexes/$index/keys");
+method get_index_keys(Str $index = '') {
+    return $index
+        ? $self->get("/indexes/$index/keys")
+        : $self->get('/indexes/*/keys');
 }
 
 method get_index_key(Str $index, Str $key) {
@@ -528,13 +526,13 @@ B<Response:>
         updatedAt => "2014-12-06T02:49:40.859Z",
     }
 
-=head2 get_keys
+=head2 get_index_keys
 
-Retrieves API keys that have access to one index with their rights.
+If an indexName is passed, retrieves API keys that have access to this index with their rights.  Otherwise, retrieves all API keys that have access to one index with their rights.
 
 B<Request:>
 
-    get_keys();
+    get_index_keys();
 
 B<Response:>
 
@@ -554,10 +552,6 @@ B<Response:>
             },
         ],
     }
-
-=head2 get_index_keys
-
-Retrieves API keys that have access to this index with their rights.
 
 B<Request:>
 

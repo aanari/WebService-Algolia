@@ -171,7 +171,7 @@ subtest 'Index Key Management' => sub {
     ok alg->create_index_object($name, { content => 'placeholder' }),
         "Created index object '$name'";
 
-    my $keys = alg->get_keys;
+    my $keys = alg->get_index_keys;
     cmp_deeply $keys->{keys} => [],
         "Correctly retrieved no keys on '$name'"
         or diag explain $keys;
@@ -189,7 +189,7 @@ subtest 'Index Key Management' => sub {
         }, "Successfully retrieved key '$key'"
         or diag explain $key_object;
 
-    $keys = alg->get_keys;
+    $keys = alg->get_index_keys;
     cmp_deeply $keys->{keys} => [{
             acl      => [],
             index    => $name,
@@ -223,7 +223,7 @@ subtest 'Index Key Management' => sub {
 
     sleep 1;
 
-    $keys = alg->get_keys;
+    $keys = alg->get_index_keys;
     cmp_deeply $keys->{keys} => [],
         "Correctly retrieved no keys on '$name'"
         or diag explain $keys;

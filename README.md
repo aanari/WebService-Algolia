@@ -4,7 +4,7 @@ WebService::Algolia
 
 # VERSION
 
-version 0.0400
+version 0.0500
 
 # SYNOPSIS
 
@@ -403,13 +403,13 @@ Updates part of an object (if the object does not exist, it will be created. You
         updatedAt => "2014-12-06T02:49:40.859Z",
     }
 
-## get\_keys
+## get\_index\_keys
 
-Retrieves API keys that have access to one index with their rights.
+If an indexName is passed, retrieves API keys that have access to this index with their rights.  Otherwise, retrieves all API keys that have access to one index with their rights.
 
 **Request:**
 
-    get_keys();
+    get_index_keys();
 
 **Response:**
 
@@ -429,10 +429,6 @@ Retrieves API keys that have access to one index with their rights.
             },
         ],
     }
-
-## get\_index\_keys
-
-Retrieves API keys that have access to this index with their rights.
 
 **Request:**
 
