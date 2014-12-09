@@ -153,6 +153,20 @@ method get_logs(HashRef $params = {}) {
     return $self->get('/logs', $params);
 }
 
+method get_popular_searches(ArrayRef[Str] $indexes = []) {
+    my $csv_indexes = join ',', @$indexes;
+    return $self->get(_analytics_uri("/searches/$csv_indexes/popular"));
+}
+
+method get_unpopular_searches(ArrayRef[Str] $indexes = []) {
+    my $csv_indexes = join ',', @$indexes;
+    return $self->get(_analytics_uri("/searches/$csv_indexes/noresults"));
+}
+
+func _analytics_uri(Str $uri) {
+    return "https://analytics.algolia.com/1$uri";
+}
+
 =head1 SYNOPSIS
 
     use WebService::Algolia;
@@ -819,6 +833,45 @@ B<Response:>
                 url                => "/1/indexes/pirouette/keys/b7fbe3bcc26322af222edf2a9ca934ee",
             },
         ],
+    }
+
+=head2 get_popular_searches
+
+Return popular queries for a set of indices.
+
+B<Request:>
+
+    get_popular_searches(['foo']);
+
+B<Response:>
+
+    {
+        lastSearchAt => "2014-12-09T05:00:00.000Z",
+        searchCount  => 48,
+        topSearches  => [
+            {
+                avgHitCount             => 0,
+                avgHitCountWithoutTypos => 0,
+                count                   => 32,
+                query                   => "bat"
+            },
+        ],
+    }
+
+=head2 get_unpopular_searches
+
+Return queries matching 0 records for a set of indices.
+
+B<Request:>
+
+    get_unpopular_searches(['foo']);
+
+B<Response:>
+
+    {
+        lastSearchAt        => "2014-12-09T05:00:00.000Z",
+        searchCount         => 48,
+        topSearchesNoResuls => [ { count => 16, query => "baz" } ],
     }
 
 =cut

@@ -4,7 +4,7 @@ WebService::Algolia
 
 # VERSION
 
-version 0.0610
+version 0.0700
 
 # SYNOPSIS
 
@@ -672,6 +672,45 @@ Return last logs.
                 url                => "/1/indexes/pirouette/keys/b7fbe3bcc26322af222edf2a9ca934ee",
             },
         ],
+    }
+
+## get\_popular\_searches
+
+Return popular queries for a set of indices.
+
+**Request:**
+
+    get_popular_searches(['foo']);
+
+**Response:**
+
+    {
+        lastSearchAt => "2014-12-09T05:00:00.000Z",
+        searchCount  => 48,
+        topSearches  => [
+            {
+                avgHitCount             => 0,
+                avgHitCountWithoutTypos => 0,
+                count                   => 32,
+                query                   => "bat"
+            },
+        ],
+    }
+
+## get\_unpopular\_searches
+
+Return queries matching 0 records for a set of indices.
+
+**Request:**
+
+    get_unpopular_searches(['foo']);
+
+**Response:**
+
+    {
+        lastSearchAt        => "2014-12-09T05:00:00.000Z",
+        searchCount         => 48,
+        topSearchesNoResuls => [ { count => 16, query => "baz" } ],
     }
 
 # BUGS
