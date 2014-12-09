@@ -129,6 +129,26 @@ method get_task_status(Str $index, Str $task_id) {
     return $self->get("/indexes/$index/task/$task_id");
 }
 
+method get_keys() {
+    return $self->get('/keys');
+}
+
+method get_key(Str $key) {
+    return $self->get("/keys/$key");
+}
+
+method create_key(HashRef $data) {
+    return $self->post('/keys', $data);
+}
+
+method update_key(Str $key, HashRef $data) {
+    return $self->put("/keys/$key", $data);
+}
+
+method delete_key(Str $key) {
+    return $self->delete("/keys/$key");
+}
+
 =head1 SYNOPSIS
 
     use WebService::Algolia;
@@ -560,11 +580,13 @@ B<Request:>
 B<Response:>
 
     {
-        keys => [{
-            acl      => [],
-            validity => 0,
-            value    => "181b9114149666398628faa37b31cc8d",
-        }],
+        keys => [
+            {
+                acl      => [],
+                validity => 0,
+                value    => "181b9114149666398628faa37b31cc8d",
+            }
+        ],
     }
 
 =head2 get_index_key
@@ -640,6 +662,76 @@ B<Response:>
     {
         pendingTask => bless(do{\(my $o = 0)}, "JSON::PP::Boolean"),
         status => "published",
+    }
+
+=head2 get_keys
+
+Retrieves global API keys with their rights. These keys have been created with the add global key API.
+
+B<Request:>
+
+    get_keys();
+
+B<Response:>
+
+    {
+        keys => [
+            {
+                acl      => [],
+                validity => 0,
+                value    => "28b555c212728a7f462fe96c0e677539",
+            },
+            {
+                acl      => [],
+                validity => 0,
+                value    => "6ef88c72a6a4fc7e660f8819f111697c",
+            }
+        ],
+    }
+
+=head2 get_key
+
+Returns the rights of a given global API key that has been created with the add global Key API.
+
+B<Request:>
+
+    get_key('28b555c212728a7f462fe96c0e677539');
+
+B<Response:>
+
+    {
+        acl      => [],
+        validity => 0,
+        value    => "28b555c212728a7f462fe96c0e677539",
+    }
+
+=head2 update_key
+
+Updates a global API key.
+
+B<Request:>
+
+    update_key('28b555c212728a7f462fe96c0e677539', { acl => ['search', 'browse']});
+
+B<Response:>
+
+    {
+        updatedAt => "2014-12-08T16:39:11.9Z",
+        key       => "28b555c212728a7f462fe96c0e677539",
+    }
+
+=head2 delete_key
+
+Deletes a global API key that has been created with the add global Key API.
+
+B<Request:>
+
+    delete_key('28b555c212728a7f462fe96c0e677539');
+
+B<Response:>
+
+    {
+        deletedAt => "2014-12-08T16:40:49.86Z",
     }
 
 =cut

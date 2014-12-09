@@ -4,7 +4,7 @@ WebService::Algolia
 
 # VERSION
 
-version 0.0500
+version 0.0600
 
 # SYNOPSIS
 
@@ -437,11 +437,13 @@ If an indexName is passed, retrieves API keys that have access to this index wit
 **Response:**
 
     {
-        keys => [{
-            acl      => [],
-            validity => 0,
-            value    => "181b9114149666398628faa37b31cc8d",
-        }],
+        keys => [
+            {
+                acl      => [],
+                validity => 0,
+                value    => "181b9114149666398628faa37b31cc8d",
+            }
+        ],
     }
 
 ## get\_index\_key
@@ -517,6 +519,76 @@ Retrieves the status of a given task (published or notPublished). Also returns a
     {
         pendingTask => bless(do{\(my $o = 0)}, "JSON::PP::Boolean"),
         status => "published",
+    }
+
+## get\_keys
+
+Retrieves global API keys with their rights. These keys have been created with the add global key API.
+
+**Request:**
+
+    get_keys();
+
+**Response:**
+
+    {
+        keys => [
+            {
+                acl      => [],
+                validity => 0,
+                value    => "28b555c212728a7f462fe96c0e677539",
+            },
+            {
+                acl      => [],
+                validity => 0,
+                value    => "6ef88c72a6a4fc7e660f8819f111697c",
+            }
+        ],
+    }
+
+## get\_key
+
+Returns the rights of a given global API key that has been created with the add global Key API.
+
+**Request:**
+
+    get_key('28b555c212728a7f462fe96c0e677539');
+
+**Response:**
+
+    {
+        acl      => [],
+        validity => 0,
+        value    => "28b555c212728a7f462fe96c0e677539",
+    }
+
+## update\_key
+
+Updates a global API key.
+
+**Request:**
+
+    update_key('28b555c212728a7f462fe96c0e677539', { acl => ['search', 'browse']});
+
+**Response:**
+
+    {
+        updatedAt => "2014-12-08T16:39:11.9Z",
+        key       => "28b555c212728a7f462fe96c0e677539",
+    }
+
+## delete\_key
+
+Deletes a global API key that has been created with the add global Key API.
+
+**Request:**
+
+    delete_key('28b555c212728a7f462fe96c0e677539');
+
+**Response:**
+
+    {
+        deletedAt => "2014-12-08T16:40:49.86Z",
     }
 
 # BUGS
