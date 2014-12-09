@@ -4,7 +4,7 @@ WebService::Algolia
 
 # VERSION
 
-version 0.0600
+version 0.0610
 
 # SYNOPSIS
 
@@ -589,6 +589,89 @@ Deletes a global API key that has been created with the add global Key API.
 
     {
         deletedAt => "2014-12-08T16:40:49.86Z",
+    }
+
+## get\_logs
+
+Return last logs.
+
+**Request:**
+
+    get_logs();
+
+**Response:**
+
+    {
+        logs => [
+            {
+                answer             => "\n{\n  \"keys\": [\n  ]\n}\n",
+                answer_code        => 200,
+                ip                 => "199.91.170.132",
+                method             => "GET",
+                nb_api_calls       => 1,
+                processing_time_ms => 1,
+                query_body         => "",
+                query_headers      => "TE: deflate,gzip;q=0.3\nConnection: TE, close\nHost: 9KV4OFXW8Z.algolia.io\nUser-Agent: libwww-perl/6.08\nContent-Type: application/json\nX-Algolia-API-Key: 28d*****************************\nX-Algolia-Application-Id: 9KV4OFXW8Z\n",
+                sha1 => "b82f8d002ccae799f6629300497725faa670cc7b",
+                timestamp => "2014-12-09T05:08:05Z",
+                url => "/1/keys",
+            },
+            {
+                answer             => "\n{\n  \"value\": \"3bfccc91bb844f5ba0fc816449a9d340\",\n  \"acl\": [\n    \"search\"\n  ],\n \"validity\": 0\n}\n",
+                answer_code        => 200,
+                ip                 => "199.91.170.132",
+                method             => "GET",
+                nb_api_calls       => 1,
+                processing_time_ms => 1,
+                query_body         => "",
+                query_headers      => "TE: deflate,gzip;q=0.3\nConnection: TE, close\nHost: 9KV4OFXW8Z.algolia.io\nUser-Agent: libwww-perl/6.08\nContent-Type: application/json\nX-Algolia-API-Key: 28d*****************************\nX-Algolia-Application-Id: 9KV4OFXW8Z\n",
+                sha1 => "4915e88a309ea42f8f0ee46c9358b57b9a37a3d9",
+                timestamp => "2014-12-09T05:08:04Z",
+                url => "/1/keys/3bfccc91bb844f5ba0fc816449a9d340",
+            },
+        ],
+    }
+
+**Request:**
+
+    get_logs({
+        offset => 4,
+        length => 2,
+    });
+
+**Response:**
+
+    {
+        logs => [
+            {
+                answer             => "\n{\n  \"message\": \"Key does not exist\"\n}\n",
+                answer_code        => 404,
+                index              => "pirouette",
+                ip                 => "50.243.54.51",
+                method             => "GET",
+                nb_api_calls       => 1,
+                processing_time_ms => 1,
+                query_body         => "",
+                query_headers      => "TE: deflate,gzip;q=0.3\nConnection: TE, close\nHost: 9KV4OFXW8Z.algolia.io\nUser-Agent: libwww-perl/6.07\nContent-Type: application/json\nX-Algolia-API-Key: 28d*****************************\nX-Algolia-Application-Id: 9KV4OFXW8Z\n",
+                sha1               => "e2d3de10f69d8efb16caadaa22c6312ac408ed48",
+                timestamp          => "2014-12-08T16:06:32Z",
+                url                => "/1/indexes/pirouette/keys/25c005baabd13ab5c3ac14a79c9d5c27",
+            },
+            {
+                answer             => "\n{\n  \"message\": \"Key does not exist\"\n}\n",
+                answer_code        => 404,
+                index              => "pirouette",
+                ip                 => "50.243.54.51",
+                method             => "GET",
+                nb_api_calls       => 1,
+                processing_time_ms => 1,
+                query_body         => "",
+                query_headers      => "TE: deflate,gzip;q=0.3\nConnection: TE, close\nHost: 9KV4OFXW8Z.algolia.io\nUser-Agent: libwww-perl/6.07\nContent-Type: application/json\nX-Algolia-API-Key: 28d*****************************\nX-Algolia-Application-Id: 9KV4OFXW8Z\n",
+                sha1               => "d0799be3ccf05d2d5a0c902f6e80917468d5e6ff",
+                timestamp          => "2014-12-08T16:06:07Z",
+                url                => "/1/indexes/pirouette/keys/b7fbe3bcc26322af222edf2a9ca934ee",
+            },
+        ],
     }
 
 # BUGS
