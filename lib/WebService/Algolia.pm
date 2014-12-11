@@ -11,12 +11,15 @@ use Method::Signatures;
 use Storable qw(dclone);
 use URI;
 
-has api_key        => ( is => 'ro', required => 1 );
-has application_id => ( is => 'ro', required => 1 );
+has api_key        => ( is => 'ro', required => 1                   );
+has application_id => ( is => 'ro', required => 1                   );
+has batch_mode     => ( is => 'rw', default => 0, init_arg => undef );
 
-has '+base_url' => ( default => method {
-    'https://' . $self->application_id . '.algolia.io/1'
-});
+has '+base_url'    => ( is => 'ro', default =>
+    method {
+        'https://' . $self->application_id . '.algolia.io/1'
+    }
+);
 
 method BUILD(...) {
     $self->ua->default_header('X-Algolia-Application-Id' => $self->application_id);
@@ -105,6 +108,17 @@ method update_index_object(Str $index, Str $object_id, HashRef $data) {
     return $self->post("/indexes/$index/$object_id/partial", $data);
 }
 
+method delete_index_object(Str $index, Str $object_id) {
+    return $self->delete("/indexes/$index/$object_id");
+}
+
+method batch(Str $index, ArrayRef[CodeRef] $operations) {
+    $self->batch_mode(1);
+    my $requests = [ map { $_->() } @$operations ];
+    $self->batch_mode(0);
+    return $self->post("/indexes/$index/batch", { requests => $requests });
+}
+
 method get_index_keys(Str $index = '') {
     return $index
         ? $self->get("/indexes/$index/keys")
@@ -167,6 +181,22 @@ method get_unpopular_searches(ArrayRef[Str] $indexes = []) {
 
 func _analytics_uri(Str $uri) {
     return "https://analytics.algolia.com/1$uri";
+}
+
+for my $func (qw/put post delete/) {
+    around $func => sub {
+        my ($orig, $self, @args) = @_;
+        if ($self->batch_mode) {
+            my ($path, $body) = @args;
+            return {
+                method => uc $func,
+                path   => "/1$path",
+                (body  => $body) x!! $body,
+            };
+        } else {
+            return $self->$orig(@args);
+        }
+    };
 }
 
 # ABSTRACT: Algolia API Bindings
@@ -566,6 +596,70 @@ B<Response:>
         objectID  => 5333251,
         taskID    => 29453760,
         updatedAt => "2014-12-06T02:49:40.859Z",
+    }
+
+=head2 delete_index_object
+
+Deletes an existing object from the index.
+
+B<Request:>
+
+    delete_index_object('foo', 5333251);
+
+B<Response:>
+
+    {
+        objectID  => 5333251,
+        taskID    => 29453760,
+        deletedAt => "2014-12-11T02:49:40.859Z",
+    }
+
+=head2 batch
+
+To reduce the amount of time spent on network round trips, you can create, update, or delete several objects in one call, using the batch endpoint (all operations are done in the given order).
+
+The following method can be passed into the C<batch> method: C<create_index_object>, C<update_index_object>, C<replace_index_object>, and <delete_index_object>.
+
+B<Request:>
+
+    my $batch = alg->batch($name, [
+        sub { alg->create_index_object('foo', { hello => 'world' })},
+        sub { alg->create_index_object('foo', { goodbye => 'world' })},
+    ]);
+
+B<Response:>
+
+    {
+        objectIDs => [5698830, 5698840],
+        taskID => 40684520,
+    }
+
+B<Request:>
+
+    my $batch = alg->batch($name, [
+        sub { alg->update_index_object('foo', 5698830, { 1 => 2 })},
+        sub { alg->update_index_object('foo', 5698840, { 3 => 4 })},
+    ]);
+
+B<Response:>
+
+    {
+        objectIDs => [5698830, 5698840],
+        taskID => 40684521,
+    }
+
+B<Request:>
+
+    my $batch = alg->batch($name, [
+        sub { alg->delete_index_object('foo', 5698830 )},
+        sub { alg->delete_index_object('foo', 5698840 )},
+    ]);
+
+B<Response:>
+
+    {
+        objectIDs => [5698830, 5698840],
+        taskID => 40684522,
     }
 
 =head2 get_index_keys

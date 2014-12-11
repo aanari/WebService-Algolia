@@ -4,7 +4,7 @@ WebService::Algolia - Algolia API Bindings
 
 # VERSION
 
-version 0.0700
+version 0.0800
 
 # SYNOPSIS
 
@@ -401,6 +401,70 @@ Updates part of an object (if the object does not exist, it will be created. You
         objectID  => 5333251,
         taskID    => 29453760,
         updatedAt => "2014-12-06T02:49:40.859Z",
+    }
+
+## delete\_index\_object
+
+Deletes an existing object from the index.
+
+**Request:**
+
+    delete_index_object('foo', 5333251);
+
+**Response:**
+
+    {
+        objectID  => 5333251,
+        taskID    => 29453760,
+        deletedAt => "2014-12-11T02:49:40.859Z",
+    }
+
+## batch
+
+To reduce the amount of time spent on network round trips, you can create, update, or delete several objects in one call, using the batch endpoint (all operations are done in the given order).
+
+The following method can be passed into the `batch` method: `create_index_object`, `update_index_object`, `replace_index_object`, and <delete\_index\_object>.
+
+**Request:**
+
+    my $batch = alg->batch($name, [
+        sub { alg->create_index_object('foo', { hello => 'world' })},
+        sub { alg->create_index_object('foo', { goodbye => 'world' })},
+    ]);
+
+**Response:**
+
+    {
+        objectIDs => [5698830, 5698840],
+        taskID => 40684520,
+    }
+
+**Request:**
+
+    my $batch = alg->batch($name, [
+        sub { alg->update_index_object('foo', 5698830, { 1 => 2 })},
+        sub { alg->update_index_object('foo', 5698840, { 3 => 4 })},
+    ]);
+
+**Response:**
+
+    {
+        objectIDs => [5698830, 5698840],
+        taskID => 40684521,
+    }
+
+**Request:**
+
+    my $batch = alg->batch($name, [
+        sub { alg->delete_index_object('foo', 5698830 )},
+        sub { alg->delete_index_object('foo', 5698840 )},
+    ]);
+
+**Response:**
+
+    {
+        objectIDs => [5698830, 5698840],
+        taskID => 40684522,
     }
 
 ## get\_index\_keys

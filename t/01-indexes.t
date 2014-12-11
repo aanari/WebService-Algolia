@@ -154,14 +154,50 @@ subtest 'Index Object Management' => sub {
     sleep 1;
 
     my $task = alg->get_task_status($name, $task_id);
-    is $task->{status} => 'published',
-        "Retrieved task '$task_id' with status: 'published'"
+    like $task->{status} => qr/[Pp]ublished/,
+        "Retrieved task '$task_id' with status: '$task->{status}'"
         or diag explain $task;
 
     cmp_deeply $objects->{results} => [ map { TD->superhashof({ objectID => $_ })}
         ($object_id, $object_id2)],
         "Found objects '$object_id' and '$object_id2'"
         or diag explain $objects;
+
+    my $batch = alg->batch($name, [
+        sub { alg->create_index_object($name, { hello => 'world' })},
+        sub { alg->create_index_object($name, { goodbye => 'world' })},
+    ]);
+
+    is @{$batch->{objectIDs}} => 2,
+        "Succesfully batched two 'create_index_object' requests on '$name'"
+        or diag explain $batch;
+
+    $batch = alg->batch($name, [
+        sub { alg->update_index_object($name, $batch->{objectIDs}[0], { 1 => 2 })},
+        sub { alg->update_index_object($name, $batch->{objectIDs}[1], { 3 => 4 })},
+    ]);
+
+    is @{$batch->{objectIDs}} => 2,
+        "Succesfully batched two 'update_index_object' requests on '$name'"
+        or diag explain $batch;
+
+    $batch = alg->batch($name, [
+        sub { alg->replace_index_object($name, $batch->{objectIDs}[0], { bacon => 'tasty' })},
+        sub { alg->replace_index_object($name, $batch->{objectIDs}[1], { chicken => 'delicious' })},
+    ]);
+
+    is @{$batch->{objectIDs}} => 2,
+        "Succesfully batched two 'replace_index_object' requests on '$name'"
+        or diag explain $batch;
+
+    $batch = alg->batch($name, [
+        sub { alg->delete_index_object($name, $batch->{objectIDs}[0] )},
+        sub { alg->delete_index_object($name, $batch->{objectIDs}[1] )},
+    ]);
+
+    is @{$batch->{objectIDs}} => 2,
+        "Succesfully batched two 'delete_index_object' requests on '$name'"
+        or diag explain $batch;
 
     ok alg->delete_index($name), "Deleted index '$name' completely";
 };
