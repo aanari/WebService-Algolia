@@ -4,6 +4,7 @@ requires "Moo" => "1.006000";
 requires "Storable" => "0";
 requires "URI" => "0";
 requires "WebService::Client" => "0";
+requires "perl" => "5.008001";
 
 on 'test' => sub {
   requires "Exporter" => "0";
@@ -13,7 +14,6 @@ on 'test' => sub {
   requires "Memoize" => "0";
   requires "Test::Modern" => "0";
   requires "Test::More" => "0";
-  requires "perl" => "5.006";
   requires "strict" => "0";
   requires "warnings" => "0";
 };

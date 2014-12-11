@@ -1,4 +1,6 @@
 package WebService::Algolia;
+
+use 5.008001;
 use Moo;
 with 'WebService::Client';
 
@@ -166,6 +168,8 @@ method get_unpopular_searches(ArrayRef[Str] $indexes = []) {
 func _analytics_uri(Str $uri) {
     return "https://analytics.algolia.com/1$uri";
 }
+
+# ABSTRACT: Algolia API Bindings
 
 =head1 SYNOPSIS
 
@@ -873,6 +877,10 @@ B<Response:>
         searchCount         => 48,
         topSearchesNoResuls => [ { count => 16, query => "baz" } ],
     }
+
+=head1 SEE ALSO
+
+L<https://www.algolia.com/doc> - the API documentation for L<https://www.algolia.com>.
 
 =cut
 

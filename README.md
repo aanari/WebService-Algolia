@@ -1,6 +1,6 @@
 # NAME
 
-WebService::Algolia
+WebService::Algolia - Algolia API Bindings
 
 # VERSION
 
@@ -712,6 +712,10 @@ Return queries matching 0 records for a set of indices.
         searchCount         => 48,
         topSearchesNoResuls => [ { count => 16, query => "baz" } ],
     }
+
+# SEE ALSO
+
+[https://www.algolia.com/doc](https://www.algolia.com/doc) - the API documentation for [https://www.algolia.com](https://www.algolia.com).
 
 # BUGS
 
