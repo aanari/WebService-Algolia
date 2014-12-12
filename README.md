@@ -4,7 +4,7 @@ WebService::Algolia - Algolia API Bindings
 
 # VERSION
 
-version 0.1000
+version 0.1001
 
 # SYNOPSIS
 
@@ -427,7 +427,7 @@ The following methods can be passed into the `batch_index_objects` method as ano
 
 **Request:**
 
-    my $batch = alg->batch_index_objects('foo', [
+    alg->batch_index_objects('foo', [
         sub { alg->create_index_object('foo', { hello => 'world' })},
         sub { alg->create_index_object('foo', { goodbye => 'world' })},
     ]);
@@ -441,7 +441,7 @@ The following methods can be passed into the `batch_index_objects` method as ano
 
 **Request:**
 
-    my $batch = alg->batch_index_objects('foo', [
+    alg->batch_index_objects('foo', [
         sub { alg->update_index_object('foo', 5698830, { 1 => 2 })},
         sub { alg->update_index_object('foo', 5698840, { 3 => 4 })},
     ]);
@@ -455,7 +455,7 @@ The following methods can be passed into the `batch_index_objects` method as ano
 
 **Request:**
 
-    my $batch = alg->batch_index_objects('foo', [
+    alg->batch_index_objects('foo', [
         sub { alg->delete_index_object('foo', 5698830 )},
         sub { alg->delete_index_object('foo', 5698840 )},
     ]);
