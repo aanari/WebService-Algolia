@@ -610,7 +610,7 @@ B<Response:>
 
     {
         objectID  => 5333251,
-        taskID    => 29453760,
+        taskID    => 29453761,
         deletedAt => "2014-12-11T02:49:40.859Z",
     }
 
@@ -618,11 +618,11 @@ B<Response:>
 
 To reduce the amount of time spent on network round trips, you can create, update, or delete several objects in one call, using the batch endpoint (all operations are done in the given order).
 
-The following method can be passed into the C<batch> method: C<create_index_object>, C<update_index_object>, C<replace_index_object>, and <delete_index_object>.
+The following methods can be passed into the C<batch> method as anonymous subroutines: C<create_index_object>, C<update_index_object>, C<replace_index_object>, and C<delete_index_object>.
 
 B<Request:>
 
-    my $batch = alg->batch($name, [
+    my $batch = alg->batch('foo', [
         sub { alg->create_index_object('foo', { hello => 'world' })},
         sub { alg->create_index_object('foo', { goodbye => 'world' })},
     ]);
@@ -636,7 +636,7 @@ B<Response:>
 
 B<Request:>
 
-    my $batch = alg->batch($name, [
+    my $batch = alg->batch('foo', [
         sub { alg->update_index_object('foo', 5698830, { 1 => 2 })},
         sub { alg->update_index_object('foo', 5698840, { 3 => 4 })},
     ]);
@@ -650,7 +650,7 @@ B<Response:>
 
 B<Request:>
 
-    my $batch = alg->batch($name, [
+    my $batch = alg->batch('foo', [
         sub { alg->delete_index_object('foo', 5698830 )},
         sub { alg->delete_index_object('foo', 5698840 )},
     ]);

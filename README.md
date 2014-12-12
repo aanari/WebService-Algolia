@@ -4,7 +4,7 @@ WebService::Algolia - Algolia API Bindings
 
 # VERSION
 
-version 0.0800
+version 0.0801
 
 # SYNOPSIS
 
@@ -415,7 +415,7 @@ Deletes an existing object from the index.
 
     {
         objectID  => 5333251,
-        taskID    => 29453760,
+        taskID    => 29453761,
         deletedAt => "2014-12-11T02:49:40.859Z",
     }
 
@@ -423,11 +423,11 @@ Deletes an existing object from the index.
 
 To reduce the amount of time spent on network round trips, you can create, update, or delete several objects in one call, using the batch endpoint (all operations are done in the given order).
 
-The following method can be passed into the `batch` method: `create_index_object`, `update_index_object`, `replace_index_object`, and <delete\_index\_object>.
+The following methods can be passed into the `batch` method as anonymous subroutines: `create_index_object`, `update_index_object`, `replace_index_object`, and `delete_index_object`.
 
 **Request:**
 
-    my $batch = alg->batch($name, [
+    my $batch = alg->batch('foo', [
         sub { alg->create_index_object('foo', { hello => 'world' })},
         sub { alg->create_index_object('foo', { goodbye => 'world' })},
     ]);
@@ -441,7 +441,7 @@ The following method can be passed into the `batch` method: `create_index_object
 
 **Request:**
 
-    my $batch = alg->batch($name, [
+    my $batch = alg->batch('foo', [
         sub { alg->update_index_object('foo', 5698830, { 1 => 2 })},
         sub { alg->update_index_object('foo', 5698840, { 3 => 4 })},
     ]);
@@ -455,7 +455,7 @@ The following method can be passed into the `batch` method: `create_index_object
 
 **Request:**
 
-    my $batch = alg->batch($name, [
+    my $batch = alg->batch('foo', [
         sub { alg->delete_index_object('foo', 5698830 )},
         sub { alg->delete_index_object('foo', 5698840 )},
     ]);
