@@ -4,12 +4,7 @@ use t::lib::Harness qw(alg skip_unless_has_keys);
 skip_unless_has_keys;
 
 subtest 'Index Management' => sub {
-    my $indexes = alg->get_indexes;
-    cmp_deeply $indexes->{items} => [],
-        'Correctly retrieved no indexes'
-        or diag explain $indexes;
-
-    my $name = 'foo';
+    my $name = 'foo_'. time;
     my $content = { bar => { baz => 'bat'}};
     my $index = alg->create_index_object($name, $content);
     cmp_deeply $index => TD->superhashof({
@@ -34,7 +29,7 @@ subtest 'Index Management' => sub {
         'Retrieved two sets of results from batch route'
         or diag explain $queries;
 
-    $indexes = alg->get_indexes();
+    my $indexes = alg->get_indexes();
     cmp_deeply $indexes->{items} => [ TD->superhashof({
             createdAt => TD->ignore(),
         })], "Returned index '$name' in listing"
@@ -69,25 +64,25 @@ subtest 'Index Management' => sub {
         "Correctly found 'bat' in attributesToIndex for '$name'"
         or diag explain $settings;
 
-    my $name2 = 'foo2';
+    my $name2 = 'foo2_' . time;
     ok alg->copy_index($name => $name2), "Copied index '$name' to '$name2'";
 
     sleep 1;
 
     $indexes = alg->get_indexes();
-    cmp_deeply $indexes->{items} => [ map { TD->superhashof({ name => $_ })}
-        ($name, $name2)],
+    cmp_deeply $indexes->{items} => TD->superbagof(map { TD->superhashof({ name => $_ })}
+        ($name, $name2)),
         "Found indexes '$name' and '$name2'"
         or diag explain $indexes;
 
-    my $name3 = 'foo3';
+    my $name3 = 'foo3_' . time;
     ok alg->move_index($name2 => $name3), "Moved index '$name2' to '$name3'";
 
     sleep 1;
 
     $indexes = alg->get_indexes();
-    cmp_deeply $indexes->{items} => [ map { TD->superhashof({ name => $_ })}
-        ($name, $name3)],
+    cmp_deeply $indexes->{items} => TD->superbagof(map { TD->superhashof({ name => $_ })}
+        ($name, $name3)),
         "Found indexes '$name' and '$name3'"
         or diag explain $indexes;
 
@@ -103,7 +98,7 @@ subtest 'Index Management' => sub {
 };
 
 subtest 'Index Object Management' => sub {
-    my $name = 'bourbon';
+    my $name = 'bourbon_' . time;
     my $content = { delicious => 'limoncello' };
     my $index = alg->create_index_object($name, $content);
     my $object_id = $index->{objectID};
@@ -203,14 +198,9 @@ subtest 'Index Object Management' => sub {
 };
 
 subtest 'Index Key Management' => sub {
-    my $name = 'pirouette';
+    my $name = 'pirouette_' . time;
     ok alg->create_index_object($name, { content => 'placeholder' }),
         "Created index object '$name'";
-
-    my $keys = alg->get_index_keys;
-    cmp_deeply $keys->{keys} => [],
-        "Correctly retrieved no keys on '$name'"
-        or diag explain $keys;
 
     my $key = alg->create_index_key($name, {})->{key};
     ok $key, "Successfully created key: '$key'";
@@ -225,21 +215,21 @@ subtest 'Index Key Management' => sub {
         }, "Successfully retrieved key '$key'"
         or diag explain $key_object;
 
-    $keys = alg->get_index_keys;
-    cmp_deeply $keys->{keys} => [{
+    my $keys = alg->get_index_keys;
+    cmp_deeply $keys->{keys} => TD->superbagof({
             acl      => [],
             index    => $name,
             validity => 0,
             value    => $key,
-        }], "Retrieved key '$key' again"
+        }), "Retrieved key '$key' again"
         or diag explain $keys;
 
     $keys = alg->get_index_keys($name);
-    cmp_deeply $keys->{keys} => [{
+    cmp_deeply $keys->{keys} => TD->superbagof({
             acl      => [],
             validity => 0,
             value    => $key,
-        }], "Retrieved key '$key' again"
+        }), "Retrieved key '$key' again"
         or diag explain $keys;
 
     ok alg->update_index_key($name, $key, { acl => ['search']}),
