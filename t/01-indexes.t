@@ -163,7 +163,7 @@ subtest 'Index Object Management' => sub {
         "Found objects '$object_id' and '$object_id2'"
         or diag explain $objects;
 
-    my $batch = alg->batch($name, [
+    my $batch = alg->batch_index_objects($name, [
         sub { alg->create_index_object($name, { hello => 'world' })},
         sub { alg->create_index_object($name, { goodbye => 'world' })},
     ]);
@@ -172,7 +172,7 @@ subtest 'Index Object Management' => sub {
         "Succesfully batched two 'create_index_object' requests on '$name'"
         or diag explain $batch;
 
-    $batch = alg->batch($name, [
+    $batch = alg->batch_index_objects($name, [
         sub { alg->update_index_object($name, $batch->{objectIDs}[0], { 1 => 2 })},
         sub { alg->update_index_object($name, $batch->{objectIDs}[1], { 3 => 4 })},
     ]);
@@ -181,7 +181,7 @@ subtest 'Index Object Management' => sub {
         "Succesfully batched two 'update_index_object' requests on '$name'"
         or diag explain $batch;
 
-    $batch = alg->batch($name, [
+    $batch = alg->batch_index_objects($name, [
         sub { alg->replace_index_object($name, $batch->{objectIDs}[0], { bacon => 'tasty' })},
         sub { alg->replace_index_object($name, $batch->{objectIDs}[1], { chicken => 'delicious' })},
     ]);
@@ -190,7 +190,7 @@ subtest 'Index Object Management' => sub {
         "Succesfully batched two 'replace_index_object' requests on '$name'"
         or diag explain $batch;
 
-    $batch = alg->batch($name, [
+    $batch = alg->batch_index_objects($name, [
         sub { alg->delete_index_object($name, $batch->{objectIDs}[0] )},
         sub { alg->delete_index_object($name, $batch->{objectIDs}[1] )},
     ]);
