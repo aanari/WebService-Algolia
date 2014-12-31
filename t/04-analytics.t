@@ -3,6 +3,9 @@ use t::lib::Harness qw(alg skip_unless_has_keys);
 
 skip_unless_has_keys;
 
+SKIP: {
+    skip 'Holding off on testing Algolia Analytics for now', 1;
+
 subtest 'Analytics API' => sub {
     my $index_names = 'charlie tango';
     my $results = alg->get_popular_searches([ split ' ', $index_names ]);
@@ -28,5 +31,7 @@ subtest 'Analytics API' => sub {
     ok $results->{searchCount} > 0, 'Found at least one prior search attempt';
     ok $results->{topSearches}, 'Search attempt correctly returned some hits';
 };
+
+}
 
 done_testing;

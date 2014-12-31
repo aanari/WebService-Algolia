@@ -4,7 +4,7 @@ WebService::Algolia - Algolia API Bindings
 
 # VERSION
 
-version 0.1001
+version 0.1002
 
 # SYNOPSIS
 

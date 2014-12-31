@@ -41,14 +41,15 @@ method query_index(HashRef $query) {
 }
 
 method query_indexes(ArrayRef $queries) {
-    $queries = [ map {
+    my $requests = dclone $queries;
+    $requests = [ map {
         my $index = delete $_->{index};
         croak 'The \'index\' parameter is required' unless $index;
         my $uri = URI->new;
         $uri->query_form( %$_ );
         { indexName => $index, params => substr($uri, 1) };
-    } @$queries ];
-    return $self->post('/indexes/*/queries', { requests => $queries });
+    } @$requests ];
+    return $self->post('/indexes/*/queries', { requests => $requests });
 }
 
 method clear_index(Str $index) {
@@ -86,14 +87,15 @@ method get_index_object(Str $index, Str $object_id) {
 }
 
 method get_index_objects(ArrayRef $objects) {
-    $objects = [ map {
+    my $requests = dclone $objects;
+    $requests = [ map {
         my $index = delete $_->{index};
         croak 'The \'index\' parameter is required' unless $index;
         my $object = delete $_->{object};
         croak 'The \'object\' parameter is required' unless $object;
         { indexName => $index, objectID => $object }
-    } @$objects ];
-    return $self->post('/indexes/*/objects', { requests => $objects });
+    } @$requests ];
+    return $self->post('/indexes/*/objects', { requests => $requests });
 }
 
 method create_index_object(Str $index, HashRef $data) {
